@@ -1,0 +1,14 @@
+{
+  "actorSpecification": 1,
+  "name": "join-audit",
+  "title": "CSV join audit",
+  "description": "Check small CSV inputs for duplicate lookup keys and unmatched observations before a many-to-one join. Does not repair data or validate an aggregate.",
+  "version": "0.1",
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md",
+  "input": "./input_schema.json",
+  "output": "./output_schema.json",
+  "defaultMemoryMbytes": 256,
+  "minMemoryMbytes": 256,
+  "maxMemoryMbytes": 256
+}
