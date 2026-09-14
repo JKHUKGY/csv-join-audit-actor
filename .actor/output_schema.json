@@ -3,11 +3,13 @@
   "title": "Join audit report",
   "properties": {
     "report": {
+      "type": "string",
       "title": "One JSON audit report",
       "description": "Read verdict and nextAction. A successful Actor run may still report blocked, needs_review, or invalid_input. Only checks_passed means the documented join checks passed; no verdict guarantees correct measurements or aggregates.",
       "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/OUTPUT"
     },
     "dataset": {
+      "type": "string",
       "title": "Audit dataset",
       "description": "One report row, with key counts and at most ten examples of each problem type.",
       "template": "{{links.apiDefaultDatasetUrl}}/items"
