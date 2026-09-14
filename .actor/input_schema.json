@@ -1,0 +1,30 @@
+{
+  "title": "Audit a proposed CSV join",
+  "description": "Supply two small CSV strings and an exact key column. Each CSV is limited at runtime to 200000 UTF-8 bytes, 500 data rows and 50 columns. Values are compared literally; no trimming, numeric coercion or deduplication. Use only data you are authorized to process on Apify.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "observationsCsv": {
+      "title": "Observations CSV",
+      "type": "string",
+      "editor": "textarea",
+      "description": "Header plus observation rows. Repeated observation keys are allowed. Strings such as 001 and NA stay literal.",
+      "prefill": "reading_id,sensor_id,value\nr1,001,10\nr2,001,11\nr3,002,12\nr4,999,13\n"
+    },
+    "lookupCsv": {
+      "title": "Lookup CSV",
+      "type": "string",
+      "editor": "textarea",
+      "description": "Header plus lookup rows. Any duplicate nonblank key blocks the join, even if duplicate rows are identical.",
+      "prefill": "sensor_id,room\n001,north\n001,south\n002,lab\n"
+    },
+    "key": {
+      "title": "Exact shared key column",
+      "type": "string",
+      "editor": "textfield",
+      "description": "One exact column name present in both headers. Maximum 100 characters.",
+      "prefill": "sensor_id"
+    }
+  },
+  "required": ["observationsCsv", "lookupCsv", "key"]
+}
