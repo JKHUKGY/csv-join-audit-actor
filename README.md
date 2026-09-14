@@ -4,13 +4,17 @@ A small Apify Actor implementation for checking whether two CSV inputs satisfy
 an exact-key many-to-one join and how many observations lack a lookup match.
 It is intended as a tool a data-analysis agent can call before trusting a join.
 
-**Development status:** ten functional tests and four actual local Apify SDK
-processes pass on Python 3.13.9, Apify 4.0.2 and pandas 2.3.3. The SDK runs cover
-all four verdicts and verify identical dataset/key-value reports plus preserved
-input. Cloud deployment, Apify Console
-schema validation and a real agent call through the Apify MCP server are still
-unverified. This README is product documentation, not the proposed commissioned
-article. No client engagement or publication is claimed.
+**Verification status:** ten local functional tests and four actual local Apify SDK
+processes pass on Python 3.13.9, Apify 4.0.2 and pandas 2.3.3. The local SDK runs
+verify all four verdicts, identical dataset/key-value reports, and preserved input.
+On September 14, 2026, Apify Console built source commit
+`cd38092e790252fe785cb8aad4e994b38a62378f` as build `0.0.2` and completed four
+synthetic cloud cases with the expected verdicts. Cloud logs report Python
+3.13.15 and Apify SDK 4.0.2; pandas 2.3.3 is pinned in the built requirements.
+The input/output schemas passed the actual platform build. A real agent call
+through the Apify MCP server remains unverified. This README is product
+documentation, not the proposed commissioned article. No client engagement,
+publication, or earnings are claimed.
 
 ## Input
 
@@ -63,10 +67,32 @@ In SDK 4.0.2 the local `OUTPUT` record is stored without a `.json` filename
 extension; its metadata declares JSON. Consumers should read through the storage
 API instead of assuming a local filename extension.
 
-The `.actor` directory contains the Actor definition and platform input/output
-schemas. The Dockerfile is prepared for a platform build but has not been built
-in the cloud. Account setup, deployment, cloud execution and an actual agent tool
-call are separate outstanding steps.
+## Cloud verification
+
+The `.actor` directory contains the Actor definition and input/output schemas.
+Import the public repository as an Actor Git source and build it. The original
+cloud build exposed a missing `type: "string"` on each output URL entry; the
+fixed schema is included here. The Actor runs with limited permissions.
+
+The four observed Console runs used 256 MB memory, a 60-second timeout, a
+US$0.05 maximum per run, and restart-on-error off. Each run exited with code 0
+and one dataset result. The verdict, rather than process success, determines
+whether analysis can proceed. Report fields below were checked in the actual
+Console output and logs; full dataset/key-value equivalence was tested locally.
+
+| Synthetic case | Report verdict | Observed evidence |
+| --- | --- | --- |
+| Four observations; lookup contains two `001` rows | `blocked` | One duplicate lookup key; `canJoinManyToOne` false; no join counts |
+| Remove the duplicate but omit lookup key `999` | `needs_review` | Three matched observations; one unmatched, logical data row 4, key `999` |
+| Add a unique lookup entry for `999` | `checks_passed` | Four matched observations; zero unmatched |
+| Supply a two-column header followed by a three-field row | `invalid_input` | Wrong-number-of-fields reason; no join performed |
+
+All examples use invented data. The deployed Actor and cloud run records are
+private; this repository is public. The Docker base tag is `python:3.13-slim`,
+so a future rebuild may use a newer Python patch version. The observed cloud
+run durations were approximately 2-8 seconds and peak memory was below 92 MB;
+these four tiny fixtures are not a performance benchmark. Platform usage,
+pricing, limits, and MCP authentication must be checked for your own account.
 
 ## Provenance and references
 
